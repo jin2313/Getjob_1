@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    .interview-container {
+        margin-top: 10rem;
+        text-align: center;
+    }
+    .timer-container {
+        display: inline-block;
+        width: 400px;
+        height: 450px;
+        border-radius: 0.9rem;
+        background-color: rgba(255, 255, 255, 0.3);
+        vertical-align: top;
+    }
+    .circle {
+        display: inline-block;
+        width: 250px;
+        height: 250px;
+        line-height: 250px;
+        background-color: #8ccac3;
+        border-radius: 9rem;
+    }
+    .video-container {
+        display: inline-block;
+        width: 604px;
+        height: 454px;
+        vertical-align: top;
+    }
+    video {
+        width: 600px;
+        height: 450px;
+        border: 2px solid #72cac0;
+    }
+    .start-btn {
+        width: 9rem;
+    }
+</style>
+
+{% for quest in question %}
+    <div class="interview-container">
+        <h2>{{ quest.content }}</h2>
+        <div class="timer-container mt-4 mx-4">
+            <div class="circle mt-5">
+                <p id="timer-text" style="font-size: 3rem; color: #505050;"></p>
+            </div>
+            <button class="start-btn btn rounded-pill mt-5 mx-2" id="video-start" onclick="Start()">시작</button>
+            <button class="start-btn btn rounded-pill mt-5 mx-2" id="video-stop" disabled="disabled" style="background-color: #A4A4A4;">정지</button>
+        </div>
+        <div class="video-container mt-4 mx-4">
+            <video autoplay muted id="video-realtime"></video>
+        </div>
+    </div>
+{% endfor %}
+<a id="download" href="" style="display: none;">download</a>
+
+<script src="{% static 'js/count.js' %}"></script>
+<script src="{% static 'js/camera.js' %}"></script>
+
+{% endblock %}
