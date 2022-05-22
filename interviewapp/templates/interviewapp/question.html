@@ -46,19 +46,24 @@
         <h2>{{ quest.content }}</h2>
         <div class="timer-container mt-4 mx-4">
             <div class="circle mt-5">
-                <p id="timer-text" style="font-size: 3rem; color: #505050;"></p>
+                <p id="timer-text" style="font-size: 3.3rem; color: #505050;"></p>
             </div>
-            <button class="start-btn btn rounded-pill mt-5 mx-2" id="video-start" onclick="Start()">시작</button>
+            <button class="start-btn btn rounded-pill mt-5 mx-2" id="video-start">시작</button>
             <button class="start-btn btn rounded-pill mt-5 mx-2" id="video-stop" disabled="disabled" style="background-color: #A4A4A4;">정지</button>
         </div>
         <div class="video-container mt-4 mx-4">
-            <video autoplay muted id="video-realtime"></video>
+            <video autoplay muted id="video"></video>
         </div>
     </div>
 {% endfor %}
-<a id="download" href="" style="display: none;">download</a>
 
-<script src="{% static 'js/count.js' %}"></script>
-<script src="{% static 'js/camera.js' %}"></script>
+<a id="redirect" href="{% url 'interviewapp:question' %}?corp={{ corp_name }}&dept={{ dept.name }}&question={{ next_num }}"></a>
+<p id="corp_name" style="display: none;">{{ corp_name }}</p>
+<p id="dept_name" style="display: none;">{{ dept_name }}</p>
+<p id="quest_num" style="display: none;">{{ quest_id }}</p>
+<p id="report_num" style="display: none;">{{ report_num }}</p>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="{% static 'js/video.js' %}"></script>
 
 {% endblock %}

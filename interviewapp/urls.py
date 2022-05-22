@@ -5,5 +5,6 @@ from interviewapp import views
 app_name = 'interviewapp'
 
 urlpatterns = [
-    path('', views.QuestionView, name='question')
+    path('', views.QuestionView, name='question'),
+    path('test/', views.TestView, name='test'),
 ]

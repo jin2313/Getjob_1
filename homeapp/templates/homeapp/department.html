@@ -12,7 +12,7 @@
                 <h4>{{ dept.name }}</h4>
             </div>
             <div class="button-box mt-4 mb-5">
-                <a class="start-btn btn rounded-pill" href="{% url 'interviewapp:question' %}?corp={{ dept.corp_name }}&?dept={{ dept.name }}&question=1">직무 선택</a>
+                <a class="start-btn btn rounded-pill" href="{% url 'interviewapp:question' %}?corp={{ dept.corp_name }}&dept={{ dept.name }}&question=1">직무 선택</a>
             </div>
         </div>
     {% endfor %}
