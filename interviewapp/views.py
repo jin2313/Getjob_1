@@ -70,7 +70,7 @@ def TestView(request):
         else:
             fs = FileSystemStorage(location='media')
             filename = fs.save(fname, file)
-        return render(request, 'interviewapp/test1.html')
+        return render(request, 'interviewapp/question.html')
 
 
 def run_stt(file_path):
