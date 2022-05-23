@@ -51,7 +51,6 @@ def WebcamView(request):
 def TestView(request):
     if request.method == 'GET':
         video = request.GET.get('video', None);
-        print(video)
         context = {'video': video}
         return render(request, 'interviewapp/test.html', context)
     else:

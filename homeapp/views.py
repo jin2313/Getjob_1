@@ -19,7 +19,6 @@ class CorpView(ListView):
 
 def DeptView(request):
     corp_name = request.GET.get('corp', None)
-    print(corp_name)
     dept_list = Department.objects.filter(corp_name=corp_name)
     context = {'dept_list': dept_list}
     return render(request, 'homeapp/department.html', context)
