@@ -128,11 +128,12 @@ const SendVideo = blob => {
     fd.append("csrfmiddlewaretoken", csrf_token);
     fd.append("corp_name", document.getElementById("corp_name").innerText);
     fd.append("dept_name", document.getElementById("dept_name").innerText);
-    fd.append("quest_id", document.getElementById("quest_num").innerText);
+    fd.append("quest_id", document.getElementById("quest_id").innerText);
+    fd.append("quest_level", document.getElementById("quest_level").innerText);
     fd.append("report_num", document.getElementById("report_num").innerText);
 
     $.ajax({
-        url: "http://127.0.0.1:8000/interviews/test/",
+        url: "http://127.0.0.1:8000/interviews/result/",
         type: "POST",
         cache: false,
         contentType: false,
