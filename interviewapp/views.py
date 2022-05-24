@@ -69,6 +69,10 @@ def TestView(request):
 # def TendencyView(request):
 
 
+def ThresView(request):
+    return render(request, 'interviewapp/threshold.html')
+
+
 
 def run_stt(file_path):
     r = sr.Recognizer()

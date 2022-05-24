@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    body {
+        text-align: center;
+    }
+</style>
+
+<div style="margin-top: 7rem;">
+    <h1>세팅 조절</h1>
+</div>
+<div class="video-container mt-5">
+    <video id="video"></video>
+</div>
+
+<script src="{% static 'js/set_thres.js' %}"></script>
+
+{% endblock %}
