@@ -54,7 +54,7 @@ def ResultView(request):
             os.system(f"ffmpeg -y -i media/webm/{filename} media/mp4/{new_fname}.mp4")
             os.system(f"ffmpeg -y -i media/webm/{filename} media/wav/{new_fname}.wav")
             os.remove(f"media/webm/{filename}")
-            # eye = run_eyetrack(f'media/mp4/{new_fname}.mp4')
+            total, good = run_eyetrack(f'media/mp4/{new_fname}.mp4')
             text = run_stt(f'media/wav/{new_fname}.wav')
             user = User.objects.get(username=request.user.username)
             quest = Question.objects.get(quest_id=request.POST['quest_id'])
@@ -186,6 +186,5 @@ def run_eyetrack(file_path):
     good += 20   # 사람은 1분에 평균 20회 정도 눈을 깜박인다고 함
     # print(len(keypoint_list), good)
     cap.release()
-    # cv2.destroyAllWindows()
 
-    return keypoint_list
+    return len(keypoint_list), good
