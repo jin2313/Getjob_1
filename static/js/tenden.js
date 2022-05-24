@@ -1,14 +1,15 @@
 let left = 10;
 let scale = ['매우 그렇다', '그렇다', '그런 편이다', '그렇지<br>않은 편이다', '그렇지 않다', '전혀<br>그렇지 않다'];
 let count_element = new Array();
-let result_element = new Array();
+let result_element = [];
 let time = null;
 let timer = null;
 
+const x = document.getElementById("remain");
 const timer_text = document.getElementById("timer-text");
 const submit_btn = document.getElementById("submit-btn");
 const radio_btn = document.getElementsByClassName("radio-btn");
-const x = document.getElementById("remain");
+const redirect_btn = document.getElementById("redirect");
 
 
 function Set_Attribute() {
@@ -79,25 +80,46 @@ function Check_Tendency() {
         var last_element = result_element.shift();
         result_element.push(last_element);
     }
+    if (result_element.length == 0) {
+        result_element.push("None");
+    }
     Send_Result();
 }
 
 
-function Send_Result() {
-    let fd = new FormData();
-    fd.append("tendency_result", result_element),
-    fd.append("corp_name", document.getElementById("corp_name").innerText);
-    fd.append("dept_name", document.getElementById("dept_name").innerText);
-    fd.append("quest_id", document.getElementById("quest_num").innerText);
-    fd.append("report_num", document.getElementById("report_num").innerText);
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim(); // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 
-    &.ajax({
-        url: "http://127.0.0.1:8000/interviews/tendency/",
+
+function Send_Result() {
+    $.ajax({
+        url: "http://127.0.0.1:8000/interviews/result/",
         type: "POST",
-        data: fd,
+        traditional: true,
+        data: {
+            "tendency": result_element,
+            "csrfmiddlewaretoken": getCookie('csrftoken'),
+            "corp_name": document.getElementById("corp_name").innerText,
+            "dept_name": document.getElementById("dept_name").innerText,
+            "quest_id": document.getElementById("quest_id").innerText,
+            "quest_level": document.getElementById("quest_level").innerText,
+            "report_num": document.getElementById("report_num").innerText
+        },
         success: function (data) {
             console.log("SUCCESS");
-            Redirect();
+            redirect_btn.click()
         },
         error: function (errorMessage) {
             console.log("ERROR: " + errorMessage);
@@ -115,6 +137,6 @@ submit_btn.onclick = function(event) {
 
 window.onload = function() {
     Set_Attribute();
-    timer = 15;
+    timer = 7;
     time = setInterval("Timer('tendency')", 1000);
 }

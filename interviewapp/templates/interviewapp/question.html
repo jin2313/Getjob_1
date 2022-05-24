@@ -57,10 +57,11 @@
     </div>
 {% endfor %}
 
-<a id="redirect" href="{% url 'interviewapp:question' %}?corp={{ corp_name }}&dept={{ dept.name }}&question={{ next_num }}"></a>
+<a id="redirect" href="{% url 'interviewapp:question' %}?corp={{ corp_name }}&dept={{ dept_name }}&question={{ next_id }}"></a>
 <p id="corp_name" style="display: none;">{{ corp_name }}</p>
 <p id="dept_name" style="display: none;">{{ dept_name }}</p>
-<p id="quest_num" style="display: none;">{{ quest_id }}</p>
+<p id="quest_id" style="display: none;">{{ quest_id }}</p>
+<p id="quest_level" style="display: none;">{{ quest_level }}</p>
 <p id="report_num" style="display: none;">{{ report_num }}</p>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
