@@ -23,12 +23,8 @@ def QuestionView(request):
             report_num = 1
         else:
             max_num = result.aggregate(report_num=Max('report_num'))['report_num']
-            max_list = Result.objects.filter(user_id=request.user, report_num=max_num)
-            max_count = max_list.count()
-            if max_count >= 3:
-                report_num = max_num + 1
-            else:
-                report_num = max_num
+            max_count = Result.objects.filter(user_id=request.user, report_num=max_num).count()
+            report_num = max_num + 1 if max_count >= 3 else max_num
         context = {
             'question': question,
             'corp_name': corp_name,
@@ -37,15 +33,10 @@ def QuestionView(request):
             'quest_id': quest_num,
             'report_num': report_num
         }
-        return render(request, 'interviewapp/question.html', context)
-    else:
-        user = request.user
-        # user로 결과 보고서 검색, count해서 +1 한 값을 결과 보고서 id로
-        return render()
-
-
-def WebcamView(request):
-    return render(request, 'interviewapp/webcam.html')
+        if (quest_num == '4') or (quest_num == '5'):
+            return render(request, 'interviewapp/tendency.html', context)
+        else:
+            return render(request, 'interviewapp/question.html', context)
 
 
 def TestView(request):
@@ -70,6 +61,10 @@ def TestView(request):
             fs = FileSystemStorage(location='media')
             filename = fs.save(fname, file)
         return render(request, 'interviewapp/question.html')
+
+
+# def TendencyView(request):
+
 
 
 def run_stt(file_path):

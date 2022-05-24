@@ -20,7 +20,6 @@ from django.urls import path, include
 
 from homeapp import views as homeviews
 from homeapp.views import CorpView
-from interviewapp import views as interviewviews
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,7 +28,6 @@ urlpatterns = [
     path('depts/', homeviews.DeptView, name='dept'),
     path('accounts/', include('accountapp.urls')),
     path('interviews/', include('interviewapp.urls')),
-    path('webcam/', interviewviews.WebcamView, name='webcam'),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

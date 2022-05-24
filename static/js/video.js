@@ -60,6 +60,13 @@ function getCookie(name) {
 }
 
 
+function Redirect() {
+    if (video_flag) {
+        redirect_btn.click()
+    }
+}
+
+
 // 시작 버튼 이벤트 처리
 start_btn.onclick = async function(event) {
     clearInterval(time);
@@ -140,13 +147,6 @@ const SendVideo = blob => {
             console.log("ERROR: " + errorMessage);
         }
     });
-}
-
-
-function Redirect() {
-    if (video_flag) {
-        redirect_btn.click()
-    }
 }
 
 
