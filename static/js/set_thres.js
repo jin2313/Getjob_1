@@ -10,3 +10,12 @@ if (navigator.mediaDevices.getUserMedia) {
             console.log("ERROR");
         });
 }
+
+
+var slide = document.getElementById("myRange");
+var y = document.getElementById("f");
+y.innerHTML = slide.value;
+
+slide.oninput = function() {
+    y.innerHTML = this.value;
+}
