@@ -1,4 +1,8 @@
 const video = document.querySelector("#video");
+const slide = document.getElementById("myRange");
+const y = document.getElementById("thres-value");
+
+y.innerHTML = slide.value;
 
 if (navigator.mediaDevices.getUserMedia) {
     navigator.mediaDevices.getUserMedia({ video: true })
@@ -10,11 +14,6 @@ if (navigator.mediaDevices.getUserMedia) {
             console.log("ERROR");
         });
 }
-
-
-var slide = document.getElementById("myRange");
-var y = document.getElementById("f");
-y.innerHTML = slide.value;
 
 slide.oninput = function() {
     y.innerHTML = this.value;

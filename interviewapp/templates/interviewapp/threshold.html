@@ -10,49 +10,44 @@
     }
     .slider {
       -webkit-appearance: none;
-      width: 100%;
-      height: 25px;
-      background: #d3d3d3;
+      width: 600px;
+      height: 25px
       outline: none;
       opacity: 0.7;
       -webkit-transition: .2s;
       transition: opacity .2s;
     }
-
     .slider:hover {
       opacity: 1;
     }
-
     .slider::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
       width: 25px;
       height: 25px;
-      background: #04AA6D;
+      background: #a7b3dd;
       cursor: pointer;
     }
-
     .slider::-moz-range-thumb {
       width: 25px;
       height: 25px;
-      background: #04AA6D;
+      background: #a7b3dd;
       cursor: pointer;
     }
 </style>
 
-<div style="margin-top: 7rem;">
-    <h1>세팅 조절</h1>
+<div style="margin-top: 10rem;">
+    <h2>threshold 조절</h2>
 </div>
-<div class="video-container mt-5">
+<div class="video-container mt-5 mb-5">
     <video id="video"></video>
 </div>
 
-<!--슬라이더 바(디자인 고쳐야 할듯.. 아래 링크 참고함-->
-<!--https://www.w3schools.com/howto/howto_js_rangeslider.asp-->
-<div class="slidecontainer">
-    <input type="range" min="1" max="256" value="50" class="slider" id="myRange">
-    <span>Value:</span>
-    <span id="f" style="font-weight:bold;color:red">66</span>
+<div class="slide-container">
+    <input type="range" min="1" max="256" value="50" class="slider form-range" id="myRange">
+    <span>&nbsp;&nbsp;&nbsp;&nbsp;Value:</span>
+    <span id="thres-value" style="font-weight: bold; color: red;">50</span>
+    <button></button>
 </div>
 
 <script src="{% static 'js/set_thres.js' %}"></script>
