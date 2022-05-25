@@ -1,4 +1,5 @@
 import json
+from datetime import time
 
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
@@ -79,6 +80,42 @@ def ResultView(request):
             Result.objects.create(user_id=user, report_num=request.POST['report_num'], quest_id=quest, result_add=str_tendency)
 
         return render(request, 'interviewapp/question.html')
+
+
+def SettingView(request):
+    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+    eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
+
+    detector_params = cv2.SimpleBlobDetector_Params()
+    detector_params.filterByArea = True
+    detector_params.maxArea = 1500
+    detector = cv2.SimpleBlobDetector_create(detector_params)
+
+    cap = cv2.VideoCapture('http://127.0.0.1:8000/thres/')  # 웹캠 사용(아직 안됨)
+    # cv2.createTrackbar('threshold', 'image', 0, 255, nothing)
+
+    while True:
+        _, frame = cap.read()
+        face_frame = detect_faces(frame, face_cascade)
+        if face_frame is not None:
+            eyes = detect_eyes(face_frame, eye_cascade)
+            for eye in eyes:
+                if eye is not None:
+                    # threshold = cv2.getTrackbarPos('threshold', 'image')
+                    threshold = 112
+                    eye = cut_eyebrows(eye)
+                    # keypoints = blob_process(eye, threshold, detector)
+                    keypoints = blob_process(eye, threshold, detector)
+                    print(keypoints)
+                    eye = cv2.drawKeypoints(eye, keypoints, eye, (0, 0, 255),
+                                            cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+        cv2.imshow('image', frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+    cap.release()
+
+    return render(request, 'interviewapp/threshold.html', {'cap': cap, })
+
 
 
 
