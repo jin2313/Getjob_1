@@ -8,6 +8,11 @@
     body {
         text-align: center;
     }
+    video {
+        width: 644px;
+        height: 484px;
+        border: 2px solid #b6c1dd;
+    }
     .slider {
       -webkit-appearance: none;
       width: 600px;
@@ -36,7 +41,7 @@
     }
 </style>
 
-<div style="margin-top: 10rem;">
+<div style="margin-top: 9rem;">
     <h2>threshold 조절</h2>
 </div>
 <div class="video-container mt-5 mb-5">
@@ -47,7 +52,6 @@
     <input type="range" min="1" max="256" value="50" class="slider form-range" id="myRange">
     <span>&nbsp;&nbsp;&nbsp;&nbsp;Value:</span>
     <span id="thres-value" style="font-weight: bold; color: red;">50</span>
-    <button></button>
 </div>
 
 <script src="{% static 'js/set_thres.js' %}"></script>
