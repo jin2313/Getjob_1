@@ -7,7 +7,6 @@ class Corporation(models.Model):
     summary = models.TextField(null=True)
 
     def __str__(self):
-        # return str(self.corp_id)
         return self.name
 
 class Department(models.Model):
@@ -16,5 +15,4 @@ class Department(models.Model):
     corp_name = models.ForeignKey(Corporation, to_field='name', on_delete=models.CASCADE, related_name='corp', db_column='corp_name')
 
     def __str__(self):
-        # return str(self.dept_id)
         return self.name

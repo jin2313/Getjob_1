@@ -7,5 +7,4 @@ app_name = 'interviewapp'
 urlpatterns = [
     path('', views.QuestionView, name='question'),
     path('result/', views.ResultView, name='result'),
-    path('thres/', views.ThresView, name='thres'),
 ]

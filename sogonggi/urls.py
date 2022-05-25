@@ -20,10 +20,12 @@ from django.urls import path, include
 
 from homeapp import views as homeviews
 from homeapp.views import CorpView
+from interviewapp import views as interviewviews
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', homeviews.MainView, name='home'),
+    path('thres/', interviewviews.ThresView, name='thres'),
     path('corps/', CorpView.as_view(), name='corp'),
     path('depts/', homeviews.DeptView, name='dept'),
     path('accounts/', include('accountapp.urls')),

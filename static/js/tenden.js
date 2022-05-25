@@ -119,7 +119,7 @@ function Send_Result() {
         },
         success: function (data) {
             console.log("SUCCESS");
-            redirect_btn.click()
+            redirect_btn.click();
         },
         error: function (errorMessage) {
             console.log("ERROR: " + errorMessage);

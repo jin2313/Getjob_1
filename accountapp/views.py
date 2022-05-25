@@ -14,7 +14,6 @@ class SignupView(FormView):
     def form_valid(self, form):
         form.save()
         id = form.cleaned_data.get('username')
-        #name = form.cleaned_data.get('last_name')
         password = form.cleaned_data.get('password')
         user = authenticate(self.request, username=id, password=password)
         if user is not None:

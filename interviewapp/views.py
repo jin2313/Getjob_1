@@ -13,6 +13,17 @@ import numpy as np
 
 
 # Create your views here.
+def ThresView(request):
+    if request.method == 'GET':
+        return render(request, 'interviewapp/threshold.html')
+    else:
+        print(request.POST)
+        global threshold
+        threshold = int(request.POST['threshold'])
+        return render(request, 'interviewapp/threshold.html')
+
+
+
 def QuestionView(request):
     if request.method == 'GET':
         corp_name = request.GET.get('corp', None)
@@ -43,6 +54,7 @@ def QuestionView(request):
             return render(request, 'interviewapp/question.html', context)
 
 
+
 def ResultView(request):
     if request.method == 'POST':
         if request.POST['quest_level'] != '3':
@@ -70,11 +82,6 @@ def ResultView(request):
 
 
 
-def ThresView(request):
-    return render(request, 'interviewapp/threshold.html')
-
-
-
 def run_stt(file_path):
     r = sr.Recognizer()
     harvard = sr.AudioFile(file_path)
@@ -82,6 +89,7 @@ def run_stt(file_path):
         audio = r.record(source)
         result = r.recognize_google(audio, language='ko-KR')
     return result
+
 
 
 def detect_eyes(img, eye_cascade):
@@ -102,6 +110,7 @@ def detect_eyes(img, eye_cascade):
             right_eye = img[y:y + h, x:x + w]
 
     return left_eye, right_eye
+
 
 
 def detect_faces(img, face_cascade):
@@ -125,12 +134,14 @@ def detect_faces(img, face_cascade):
     return frame
 
 
+
 def cut_eyebrows(img):
     height, width = img.shape[:2]
     eyebrow_h = int(height / 4)
     img = img[eyebrow_h:height, 0:width]  # cut eyebrows out (15 px)
 
     return img
+
 
 
 def blob_process(img, threshold, detector):
@@ -144,8 +155,10 @@ def blob_process(img, threshold, detector):
     return keypoints
 
 
+
 def nothing(x):
     pass
+
 
 
 def run_eyetrack(file_path):

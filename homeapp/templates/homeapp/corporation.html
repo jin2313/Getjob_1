@@ -22,25 +22,4 @@
     {% endfor %}
 </div>
 
-<script type="text/javascript">
-    var corp_pk = document.getElementById("corp_pk").value;
-
-    $('.start-btn').on('click', function(event) {
-        $.ajax({
-            type: "POST",
-            url: "{% url 'dept' %}",
-            data: {
-                'corp_pk': corp_pk
-            },
-            dataType: "json",
-            success: function(json) {
-                console.log("success", json);
-            }
-            error: function(xhr,errmsg,err) {
-                console.log("error");
-            }
-        });
-    });
-</script>
-
 {% endblock %}
