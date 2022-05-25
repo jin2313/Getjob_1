@@ -6,7 +6,10 @@ from django.core.files.storage import FileSystemStorage
 from django.db.models import Max, Count
 from django.shortcuts import render
 from interviewapp.models import Question, Result
+from tensorflow.keras.utils import img_to_array   # 빨간줄 떠도 작동함
+from keras.models import load_model
 
+import imutils
 import os
 import speech_recognition as sr
 import cv2
@@ -68,6 +71,7 @@ def ResultView(request):
             os.system(f"ffmpeg -y -i media/webm/{filename} media/wav/{new_fname}.wav")
             os.remove(f"media/webm/{filename}")
             total, good = run_eyetrack(f'media/mp4/{new_fname}.mp4')
+            feelings_faces = expression_recognition(f'media/mp4/{new_fname}.mp4')
             text = run_stt(f'media/wav/{new_fname}.wav')
             user = User.objects.get(username=request.user.username)
             quest = Question.objects.get(quest_id=request.POST['quest_id'])
@@ -238,3 +242,78 @@ def run_eyetrack(file_path):
     cap.release()
 
     return len(keypoint_list), good
+
+
+
+def expression_recognition(file_path):
+    # hyper-parameters for bounding boxes shape
+    # loading models
+    face_detection = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+    emotion_classifier = load_model("C:/Users/minseo/mini_XCEPTION_102_66.hdf5", compile=False)   # 경로 너걸로 바꿔줘!
+    EMOTIONS = ["angry", "disgust", "scared", "happy", "sad", "surprised", "neutral"]
+
+    feelings_faces = []
+    # for index, emotion in enumerate(EMOTIONS):
+    # feelings_faces.append(cv2.imread('emojis/' + emotion + '.png', -1))
+
+    # starting video streaming
+    camera = cv2.VideoCapture(file_path)  # 녹화된 영상
+    while True:
+        ret, frame = camera.read()
+        if ret:
+            # reading the frame
+            frame = imutils.resize(frame, width=300)  # your_face 창 사이즈 조절
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # your_face 창 흑백으로 바꿈
+            faces = face_detection.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30), flags=cv2.CASCADE_SCALE_IMAGE)
+
+            canvas = np.zeros((250, 300, 3), dtype="uint8")
+            frameClone = frame.copy()
+            if len(faces) > 0:
+                faces = sorted(faces, reverse=True, key=lambda x: (x[2] - x[0]) * (x[3] - x[1]))[0]
+                (fX, fY, fW, fH) = faces
+                # Extract the ROI of the face from the grayscale image, resize it to a fixed 28x28 pixels, and then prepare
+                # the ROI for classification via the CNN
+                roi = gray[fY:fY + fH, fX:fX + fW]
+                roi = cv2.resize(roi, (64, 64))
+                roi = roi.astype("float") / 255.0
+                roi = img_to_array(roi)
+                roi = np.expand_dims(roi, axis=0)
+
+                preds = emotion_classifier.predict(roi)[0]
+                emotion_probability = np.max(preds)
+                label = EMOTIONS[preds.argmax()]
+                feelings_faces.append(label)
+            else:
+                continue
+        else:
+            break
+
+        for (i, (emotion, prob)) in enumerate(zip(EMOTIONS, preds)):
+            # construct the label text
+            text = "{}: {:.2f}%".format(emotion, prob * 100)
+
+            # draw the label + probability bar on the canvas
+            # emoji_face = feelings_faces[np.argmax(preds)]
+
+            w = int(prob * 300)
+            cv2.rectangle(canvas, (7, (i * 35) + 5),
+                          (w, (i * 35) + 35), (0, 0, 255), -1)
+            cv2.putText(canvas, text, (10, (i * 35) + 23),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.45,
+                        (255, 255, 255), 2)
+            cv2.putText(frameClone, label, (fX, fY - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 255), 2)
+            cv2.rectangle(frameClone, (fX, fY), (fX + fW, fY + fH),
+                          (0, 0, 255), 2)
+        #    for c in range(0, 3):
+        #        frame[200:320, 10:130, c] = emoji_face[:, :, c] * \
+        #        (emoji_face[:, :, 3] / 255.0) + frame[200:320,
+        #        10:130, c] * (1.0 - emoji_face[:, :, 3] / 255.0)
+
+    # print(feelings_faces)
+    camera.release()
+    cv2.destroyAllWindows()
+
+    return feelings_faces
+
+
