@@ -296,15 +296,10 @@ def expression_recognition(file_path):
             # emoji_face = feelings_faces[np.argmax(preds)]
 
             w = int(prob * 300)
-            cv2.rectangle(canvas, (7, (i * 35) + 5),
-                          (w, (i * 35) + 35), (0, 0, 255), -1)
-            cv2.putText(canvas, text, (10, (i * 35) + 23),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.45,
-                        (255, 255, 255), 2)
-            cv2.putText(frameClone, label, (fX, fY - 10),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 255), 2)
-            cv2.rectangle(frameClone, (fX, fY), (fX + fW, fY + fH),
-                          (0, 0, 255), 2)
+            cv2.rectangle(canvas, (7, (i * 35) + 5), (w, (i * 35) + 35), (0, 0, 255), -1)
+            cv2.putText(canvas, text, (10, (i * 35) + 23), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (255, 255, 255), 2)
+            cv2.putText(frameClone, label, (fX, fY - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 255), 2)
+            cv2.rectangle(frameClone, (fX, fY), (fX + fW, fY + fH), (0, 0, 255), 2)
         #    for c in range(0, 3):
         #        frame[200:320, 10:130, c] = emoji_face[:, :, c] * \
         #        (emoji_face[:, :, 3] / 255.0) + frame[200:320,
