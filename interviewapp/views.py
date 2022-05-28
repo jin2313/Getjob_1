@@ -1,4 +1,5 @@
 import json
+import threading
 from datetime import time
 
 from django.contrib.auth.models import User
@@ -72,7 +73,7 @@ def ResultView(request):
             os.remove(f"media/webm/{filename}")
             total, good = run_eyetrack(f'media/mp4/{new_fname}.mp4')
             feelings_faces = expression_recognition(f'media/mp4/{new_fname}.mp4')
-            text = run_stt(f'media/wav/{new_fname}.wav')
+            text, count = run_stt(f'media/wav/{new_fname}.wav', request.POST['corp_name'], request.POST['dept_name'], request.POST['quest_id'])
             user = User.objects.get(username=request.user.username)
             quest = Question.objects.get(quest_id=request.POST['quest_id'])
             Result.objects.create(user_id=user, report_num=request.POST['report_num'], quest_id=quest, result_stt=text)
@@ -86,50 +87,95 @@ def ResultView(request):
         return render(request, 'interviewapp/question.html')
 
 
-def SettingView(request):
-    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-    eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
-
-    detector_params = cv2.SimpleBlobDetector_Params()
-    detector_params.filterByArea = True
-    detector_params.maxArea = 1500
-    detector = cv2.SimpleBlobDetector_create(detector_params)
-
-    cap = cv2.VideoCapture('http://127.0.0.1:8000/thres/')  # 웹캠 사용(아직 안됨)
-    # cv2.createTrackbar('threshold', 'image', 0, 255, nothing)
-
-    while True:
-        _, frame = cap.read()
-        face_frame = detect_faces(frame, face_cascade)
-        if face_frame is not None:
-            eyes = detect_eyes(face_frame, eye_cascade)
-            for eye in eyes:
-                if eye is not None:
-                    # threshold = cv2.getTrackbarPos('threshold', 'image')
-                    threshold = 112
-                    eye = cut_eyebrows(eye)
-                    # keypoints = blob_process(eye, threshold, detector)
-                    keypoints = blob_process(eye, threshold, detector)
-                    print(keypoints)
-                    eye = cv2.drawKeypoints(eye, keypoints, eye, (0, 0, 255),
-                                            cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-        cv2.imshow('image', frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-    cap.release()
-
-    return render(request, 'interviewapp/threshold.html', {'cap': cap, })
-
-
-
-
-def run_stt(file_path):
+def run_stt(file_path, corp_name, dept_name, quest_id):
     r = sr.Recognizer()
     harvard = sr.AudioFile(file_path)
+    count = 0
+
     with harvard as source:
         audio = r.record(source)
         result = r.recognize_google(audio, language='ko-KR')
-    return result
+
+        if (quest_id == 1):
+            talent = count_talent(result, corp_name)
+            count = talent
+        elif (quest_id == 2):
+            job = count_job(result, dept_name)
+            count = job
+
+    return result, count
+
+
+def count_talent(result, corp_name):
+    naver = ['동료', '영향', '성장', '데이터', '흐름', '설득', '경험', '해석', '커뮤니케이션', '창의', '소통']
+    ncsoft = ['진지', '헌신', '감동', '전문성', '도전', '창의', '열정', '실행력', '협력', '다양']
+
+    s = result.split()  # 공백 기준으로 분리
+    talent = []
+
+    if (corp_name == '네이버'):   # 네이버
+        for i in s:
+            for j in naver:
+                if j in i:
+                    talent.append(i)
+    elif (corp_name == 'NCSOFT'):   # 엔씨소프트
+        for i in s:
+            for j in ncsoft:
+                if j in i:
+                    talent.append(i)
+
+    # print(talent)
+    return len(talent)   # 인재상 포함된 단어 말한 횟수? 반환, 단어 자체를 반환하려면 talent 리스트 반환하면 됨
+
+
+
+def count_job(result, dept_name):
+    app = ['안드로이드', '아이오에스', '아이폰', '앱', '스위프트', '소켓', '배포', '플레이스토어', '자바', '코틀린', '엑스코드', '그래들']
+    bigdata = ['파이썬', '빅데이터', '데이터', '판다스', '시각화', '핸들링', '전처리', '통계', '회귀', '데이터프레임', '수집']
+    be = ['리액트', '스프링', '에이더블유에스', '웹', '장고', '노드제이에스', '서버', '배포', '아키텍처', '에이피아이', '프레임워크']
+    qa = ['관리', '종합', '통계', '경영', '품질', '게임', '큐에이', '비용', '형상', '리스크', '검증', '테스트']
+    icon = ['디자인', '아이콘', '패키지', '영상', '정보', '일러스트레이터', '포토샵', '스케치', '시각']
+    text = ['자연어', '버트', '지피티', '처리', '토큰화', '모델', '트랜스포머', '분류', '벡터', '파인튜닝', '파이토치', '파이썬']
+
+    s = result.split()  # 공백 기준으로 분리
+    job = []
+
+    # 네이버
+    if (dept_name == 'iOS/Android 개발자'):
+        for i in s:
+            for j in app:
+                if j in i:
+                    job.append(i)
+    elif (dept_name == '빅데이터 분석 엔지니어'):
+        for i in s:
+            for j in bigdata:
+                if j in i:
+                    job.append(i)
+    elif (dept_name == 'Back-end 개발자'):
+        for i in s:
+            for j in be:
+                if j in i:
+                    job.append(i)
+
+    # 엔씨소프트
+    elif (dept_name == 'PC 온라인 게임 QA'):
+        for i in s:
+            for j in qa:
+                if j in i:
+                    job.append(i)
+    elif (dept_name == '아이콘 디자이너'):
+        for i in s:
+            for j in icon:
+                if j in i:
+                    job.append(i)
+    elif (dept_name == '텍스트 처리 개발자'):
+        for i in s:
+            for j in text:
+                if j in i:
+                    job.append(i)
+
+    # print(job)
+    return len(job)  # 인재상 포함된 단어 말한 횟수? 반환, 단어 자체를 반환하려면 talent 리스트 반환하면 됨
 
 
 
